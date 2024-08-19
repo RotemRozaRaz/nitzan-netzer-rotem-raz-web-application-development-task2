@@ -41,6 +41,47 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+//Generate cards according to the number specified from the user
+//--need to add images--
 function generateCards(num_of_cards) {
-    
+    const $gameBoard = $('#memory-game-board');
+    $gameBoard.empty();
+
+    const numberOfPairs = num_of_cards / 2;
+    const cards = [];
+    for (let i = 0; i < numberOfPairs; i++) {
+        const card1 = { id: i, matched: false };
+        const card2 = { id: i, matched: false };
+        cards.push(card1, card2);
+    }
+
+    cards.sort(() => Math.random() - 0.5);
+
+    cards.forEach(card => {
+        const $cardElement = $('<div>')
+            .addClass('card')
+            .attr('data-id', card.id)
+            .text('?')
+            .on('click', function () {
+                flipCard($(this));
+            });
+        $gameBoard.append($cardElement);
+    });
 }
+
+function flipCard($cardElement) {
+    let firstCard = null;
+    let secondCard = null;
+    if ($cardElement.hasClass('flipped') || secondCard) return;
+
+    $cardElement.addClass('flipped').text($cardElement.data('id'));
+
+    if (!firstCard) {
+        firstCard = $cardElement;
+    } else {
+        secondCard = $cardElement;
+        checkMatch();
+    }
+}
+
+//Need to write - score calc function, flip card when unmatched, vanish cards when matched
