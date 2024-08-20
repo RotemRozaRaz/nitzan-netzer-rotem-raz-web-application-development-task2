@@ -10,6 +10,9 @@ document.getElementById('game-setup').addEventListener('submit', function(event)
     startGame();
 });
 
+document.getElementById('reset').addEventListener('click', function() {
+    resetGame();
+});
 function startGame() {
     player_name = document.getElementById("playerName").value;
     num_of_pairs = parseInt(document.getElementById("cardPairs").value);
@@ -19,8 +22,7 @@ function startGame() {
     newGame();
 
     document.getElementById('game-setup').style.display = 'none';
-    document.getElementById('memory-game').style.display = 'grid';
-
+    document.getElementById('memory-game-container').style.display = 'block';
 }
 
 function check_num_of_pairs(num_of_pairs) {
@@ -29,7 +31,7 @@ function check_num_of_pairs(num_of_pairs) {
         return false;
     }
     if (num_of_pairs < 2 || num_of_pairs > 15) {
-        alert('Number must be an even number between 2 and 15.');
+        alert('Number must be between 2 and 15.');
         return false;
     }
     return true;
@@ -41,13 +43,15 @@ function newGame() {
     startTime = new Date();
     startTimer();
 }
+
 function resetGame() {
     flipped_cards = [];
     score = 0;
     const memoryGame = document.getElementById('memory-game');
     memoryGame.innerHTML = '';
     newGame();
-}   
+}
+
 function generateCards(num_of_pairs) {
     cards = [];
     for (let i = 1; i <= num_of_pairs; i++) {
@@ -68,14 +72,12 @@ function shuffle(array) {
 function createGameBoard(cards) {
     const memoryGame = document.getElementById('memory-game');
 
-    
-    // Calculate the number of rows and columns dynamically
     let numColumns = Math.floor(Math.sqrt(cards.length));
     while (cards.length % numColumns !== 0) {
         numColumns--;
     }
     const numRows = cards.length / numColumns;
-    
+
     memoryGame.style.gridTemplateColumns = `repeat(${numColumns}, 1fr)`; 
     memoryGame.style.gridTemplateRows = `repeat(${numRows}, 1fr)`;  
     
@@ -96,28 +98,9 @@ function createGameBoard(cards) {
         cardElement.addEventListener('click', flipCard);
         memoryGame.appendChild(cardElement);
     });
-    const timerElement = document.createElement('div');
-    timerElement.id = 'timer';
-    timerElement.textContent = 'time: 00:00';
-    memoryGame.appendChild(timerElement);
-
-    const scoreElement = document.createElement('div');
-    scoreElement.id = 'score';
-    scoreElement.textContent = 'score= 0';
-    memoryGame.appendChild(scoreElement);
-
-    const resetButton = document.createElement('button');
-    resetButton.id = 'reset';
-    resetButton.type = 'button';
-    resetButton.className = 'btn btn-secondary';
-    resetButton.textContent = 'Reset';
-    resetButton.addEventListener('click', resetGame);
-    memoryGame.appendChild(resetButton);
-
 }
 
 function flipCard() {
-    
     if (flipped_cards.length < 2 && !this.classList.contains('flipped')) {
         this.classList.add('flipped');
         flipped_cards.push(this);
@@ -133,9 +116,9 @@ function checkForMatch() {
     
     if (firstCard.dataset.value === secondCard.dataset.value) {
         score++;
-        document.getElementById("score").innerHTML="score= "+score
+        document.getElementById("score").innerHTML = `Score: ${score}`;
         flipped_cards = [];
-        if (score === cards  / 2) {
+        if (score === num_of_pairs) {
             endGame();
         }
     } else {
@@ -149,7 +132,7 @@ function checkForMatch() {
 
 function endGame() {
     clearInterval(timer);
-    alert(`well done: ${document.getElementById('timer').textContent}`);
+    alert(`Well done: ${document.getElementById('timer').textContent}`);
 }
 
 function startTimer() {
@@ -157,6 +140,6 @@ function startTimer() {
         const elapsedTime = Math.floor((new Date() - startTime) / 1000);
         const minutes = String(Math.floor(elapsedTime / 60)).padStart(2, '0');
         const seconds = String(elapsedTime % 60).padStart(2, '0');
-        document.getElementById('timer').textContent = `time: ${minutes}:${seconds}`;
+        document.getElementById('timer').textContent = `Time: ${minutes}:${seconds}`;
     }, 1000);
 }
