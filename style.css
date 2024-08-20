@@ -18,12 +18,13 @@ body {
     flex-direction: column;
     align-items: center;
 }
-
 .game-info {
-    display: flex;
     justify-content: space-between;
     width: 100%;
     max-width: 400px;
+    align-items: center;
+    display: none
+    
 }
 
 .memory-game {

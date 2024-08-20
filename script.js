@@ -16,13 +16,14 @@ document.getElementById('reset').addEventListener('click', function() {
 function startGame() {
     player_name = document.getElementById("playerName").value;
     num_of_pairs = parseInt(document.getElementById("cardPairs").value);
-
+    temp = document.getElementById('lets-play');
+    temp.innerHTML = player_name+", Let's Play!";
     if (!check_num_of_pairs(num_of_pairs)) return;
 
     newGame();
 
     document.getElementById('game-setup').style.display = 'none';
-    document.getElementById('memory-game-container').style.display = 'block';
+    document.getElementById('game-info').style.display = 'flex';
 }
 
 function check_num_of_pairs(num_of_pairs) {
@@ -46,7 +47,9 @@ function newGame() {
 
 function resetGame() {
     flipped_cards = [];
+    num_of_pairs = 0;
     score = 0;
+    update_score();
     const memoryGame = document.getElementById('memory-game');
     memoryGame.innerHTML = '';
     newGame();
@@ -116,7 +119,7 @@ function checkForMatch() {
     
     if (firstCard.dataset.value === secondCard.dataset.value) {
         score++;
-        document.getElementById("score").innerHTML = `Score: ${score}`;
+        update_score();
         flipped_cards = [];
         if (score === num_of_pairs) {
             endGame();
@@ -142,4 +145,9 @@ function startTimer() {
         const seconds = String(elapsedTime % 60).padStart(2, '0');
         document.getElementById('timer').textContent = `Time: ${minutes}:${seconds}`;
     }, 1000);
+}
+
+function update_score()
+{
+    document.getElementById("score").innerHTML="score="+score
 }
