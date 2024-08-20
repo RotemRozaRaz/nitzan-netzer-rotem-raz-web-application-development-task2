@@ -1,87 +1,162 @@
-
-let num_of_cards = 0;
+let num_of_pairs = 0;
+let player_name = "";
+let cards = [];
+let flipped_cards = [];
 let score = 0;
-let playerName = "";
 
-window.addEventListener('load', function () {
-    document.getElementById('game-setup').reset(); // Clears all input fields within the form
+
+document.getElementById('game-setup').addEventListener('submit', function(event) {
+    event.preventDefault();
+    startGame();
 });
 
-function numOfCards() {
-    //Check for a valid input number of cards before starting the game
+function startGame() {
+    player_name = document.getElementById("playerName").value;
+    num_of_pairs = parseInt(document.getElementById("cardPairs").value);
 
-    num_of_cards = document.getElementById("cardPairs").value;
+    if (!check_num_of_pairs(num_of_pairs)) return;
 
-    if (num_of_cards % 2 != 0 || num_of_cards > 30 || num_of_cards < 4) {
-        alert('Please enter the number as requested, refresh and try again');
-        return -10;
-    }
+    newGame();
 
-    return 0;
+    document.getElementById('game-setup').style.display = 'none';
+    document.getElementById('memory-game').style.display = 'grid';
+
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('game-setup').addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        if (numOfCards() == 0) {
-
-            document.getElementById('game-setup').style.display = 'none';
-
-            playerName = document.getElementById("playerName").value;
-
-            const confirmationMessage = document.createElement('div');
-            confirmationMessage.className = 'mt-4';
-            confirmationMessage.innerHTML = `<h2>${playerName}, Let's Play!</h2>`;
-
-            document.querySelector('.container').appendChild(confirmationMessage);
-
-            generateCards(num_of_cards)
-        }
-    });
-});
-
-//Generate cards according to the number specified from the user
-//--need to add images--
-function generateCards(num_of_cards) {
-    const $gameBoard = $('#memory-game-board');
-    $gameBoard.empty();
-
-    const numberOfPairs = num_of_cards / 2;
-    const cards = [];
-    for (let i = 0; i < numberOfPairs; i++) {
-        const card1 = { id: i, matched: false };
-        const card2 = { id: i, matched: false };
-        cards.push(card1, card2);
+function check_num_of_pairs(num_of_pairs) {
+    if (isNaN(num_of_pairs)) {
+        alert('You must enter a number.');
+        return false;
     }
+    if (num_of_pairs < 2 || num_of_pairs > 15) {
+        alert('Number must be an even number between 2 and 15.');
+        return false;
+    }
+    return true;
+}
 
-    cards.sort(() => Math.random() - 0.5);
+function newGame() {
+    cards = generateCards(num_of_pairs);
+    createGameBoard(cards);
+    startTime = new Date();
+    startTimer();
+}
+function resetGame() {
+    flipped_cards = [];
+    score = 0;
+    const memoryGame = document.getElementById('memory-game');
+    memoryGame.innerHTML = '';
+    newGame();
+}   
+function generateCards(num_of_pairs) {
+    cards = [];
+    for (let i = 1; i <= num_of_pairs; i++) {
+        cards.push(i);
+        cards.push(i);
+    }
+    shuffle(cards);
+    return cards;
+}
 
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function createGameBoard(cards) {
+    const memoryGame = document.getElementById('memory-game');
+
+    
+    // Calculate the number of rows and columns dynamically
+    let numColumns = Math.floor(Math.sqrt(cards.length));
+    while (cards.length % numColumns !== 0) {
+        numColumns--;
+    }
+    const numRows = cards.length / numColumns;
+    
+    memoryGame.style.gridTemplateColumns = `repeat(${numColumns}, 1fr)`; 
+    memoryGame.style.gridTemplateRows = `repeat(${numRows}, 1fr)`;  
+    
     cards.forEach(card => {
-        const $cardElement = $('<div>')
-            .addClass('card')
-            .attr('data-id', card.id)
-            .text('?')
-            .on('click', function () {
-                flipCard($(this));
-            });
-        $gameBoard.append($cardElement);
+        const cardElement = document.createElement('div');
+        cardElement.classList.add('memory-card');
+        cardElement.dataset.value = card;
+
+        const cardFront = document.createElement('img');
+        cardFront.src = `images/${card}.png`;  
+        cardElement.appendChild(cardFront);
+
+        const cardBack = document.createElement('img');
+        cardBack.src = `images/card_back.jpg`; 
+        cardBack.classList.add('card-back');
+        cardElement.appendChild(cardBack);
+
+        cardElement.addEventListener('click', flipCard);
+        memoryGame.appendChild(cardElement);
     });
+    const timerElement = document.createElement('div');
+    timerElement.id = 'timer';
+    timerElement.textContent = 'time: 00:00';
+    memoryGame.appendChild(timerElement);
+
+    const scoreElement = document.createElement('div');
+    scoreElement.id = 'score';
+    scoreElement.textContent = 'score= 0';
+    memoryGame.appendChild(scoreElement);
+
+    const resetButton = document.createElement('button');
+    resetButton.id = 'reset';
+    resetButton.type = 'button';
+    resetButton.className = 'btn btn-secondary';
+    resetButton.textContent = 'Reset';
+    resetButton.addEventListener('click', resetGame);
+    memoryGame.appendChild(resetButton);
+
 }
 
-function flipCard($cardElement) {
-    let firstCard = null;
-    let secondCard = null;
-    if ($cardElement.hasClass('flipped') || secondCard) return;
-
-    $cardElement.addClass('flipped').text($cardElement.data('id'));
-
-    if (!firstCard) {
-        firstCard = $cardElement;
-    } else {
-        secondCard = $cardElement;
-        checkMatch();
+function flipCard() {
+    
+    if (flipped_cards.length < 2 && !this.classList.contains('flipped')) {
+        this.classList.add('flipped');
+        flipped_cards.push(this);
+        
+        if (flipped_cards.length === 2) {
+            checkForMatch();
+        }
     }
 }
 
-//Need to write - score calc function, flip card when unmatched, vanish cards when matched
+function checkForMatch() {
+    const [firstCard, secondCard] = flipped_cards;
+    
+    if (firstCard.dataset.value === secondCard.dataset.value) {
+        score++;
+        document.getElementById("score").innerHTML="score= "+score
+        flipped_cards = [];
+        if (score === cards  / 2) {
+            endGame();
+        }
+    } else {
+        setTimeout(() => {
+            firstCard.classList.remove('flipped');
+            secondCard.classList.remove('flipped');
+            flipped_cards = [];
+        }, 1000);
+    }
+}
+
+function endGame() {
+    clearInterval(timer);
+    alert(`well done: ${document.getElementById('timer').textContent}`);
+}
+
+function startTimer() {
+    timer = setInterval(() => {
+        const elapsedTime = Math.floor((new Date() - startTime) / 1000);
+        const minutes = String(Math.floor(elapsedTime / 60)).padStart(2, '0');
+        const seconds = String(elapsedTime % 60).padStart(2, '0');
+        document.getElementById('timer').textContent = `time: ${minutes}:${seconds}`;
+    }, 1000);
+}

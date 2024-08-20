@@ -1,0 +1,53 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    direction: rtl;
+}
+
+.game-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.memory-game {
+    display: grid;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.memory-card {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    perspective: 1000px;
+}
+
+.memory-card img {
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+}
+
+.memory-card .card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/card_back.jpg');
+    background-size: cover;
+}
+
+.memory-card .card-front {
+    display: none; /* Hidden by default */
+}
+
+.memory-card.flipped .card-front {
+    display: block; /* Show the front when flipped */
+}
+
+.memory-card.flipped .card-back {
+    display: none; /* Hide the back when flipped */
+}
