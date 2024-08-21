@@ -74,19 +74,11 @@ function shuffle(array) {
 
 function createGameBoard(cards) {
     const memoryGame = document.getElementById('memory-game');
-
-    let numColumns = Math.floor(Math.sqrt(cards.length));
-    while (cards.length % numColumns !== 0) {
-        numColumns--;
-    }
-    const numRows = cards.length / numColumns;
-
-    memoryGame.style.gridTemplateColumns = `repeat(${numColumns}, 1fr)`; 
-    memoryGame.style.gridTemplateRows = `repeat(${numRows}, 1fr)`;  
+    memoryGame.className = 'row';
     
     cards.forEach(card => {
         const cardElement = document.createElement('div');
-        cardElement.classList.add('memory-card');
+        cardElement.classList.add('memory-card', 'col-6', 'col-sm-4', 'col-md-3', 'col-lg-2', 'col-xl-2');
         cardElement.dataset.value = card;
 
         const cardFront = document.createElement('img');
