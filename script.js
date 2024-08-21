@@ -13,6 +13,7 @@ document.getElementById('game-setup').addEventListener('submit', function(event)
 document.getElementById('reset').addEventListener('click', function() {
     resetGame();
 });
+
 function startGame() {
     player_name = document.getElementById("playerName").value;
     num_of_pairs = parseInt(document.getElementById("cardPairs").value);
@@ -31,8 +32,8 @@ function check_num_of_pairs(num_of_pairs) {
         alert('You must enter a number.');
         return false;
     }
-    if (num_of_pairs < 2 || num_of_pairs > 15) {
-        alert('Number must be between 2 and 15.');
+    if (num_of_pairs < 2 || num_of_pairs > 30) {
+        alert('Number must be between 2 and 30.');
         return false;
     }
     return true;
@@ -47,7 +48,6 @@ function newGame() {
 
 function resetGame() {
     flipped_cards = [];
-    num_of_pairs = 0;
     score = 0;
     update_score();
     const memoryGame = document.getElementById('memory-game');
