@@ -1,0 +1,72 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    direction: ltr;
+}
+
+.game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+.memory-game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.game-info {
+    justify-content: space-between;
+    width: 100%;
+    max-width: 400px;
+    align-items: center;
+    display: none
+    
+}
+
+.memory-game {
+    display: grid;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.memory-card {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    perspective: 1000px;
+}
+
+.memory-card img {
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 8px;
+}
+
+.memory-card .card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/card_back.jpg');
+    background-size: cover;
+}
+
+.memory-card .card-front {
+    display: none;
+}
+
+.memory-card.flipped .card-front {
+    display: block;
+}
+
+.memory-card.flipped .card-back {
+    display: none;
+}
