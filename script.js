@@ -1,3 +1,5 @@
+//<!--nitzan_netzer_207153479_rotem_raz_207950973-->
+
 let num_of_pairs = 0;
 let player_name = "";
 let cards = [];
